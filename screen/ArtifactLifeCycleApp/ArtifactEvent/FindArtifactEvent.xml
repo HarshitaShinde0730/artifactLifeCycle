@@ -50,7 +50,7 @@ along with this software (see the LICENSE.md file). If not, see
                 <default-field>
                     <container-dialog id="contentDialog" button-text="Content">
                         <form-single name="ContentForm">
-                            <field name="content"><default-field title=""><text-line/></default-field></field>
+                            <field name="content"><default-field title=""><display/></default-field></field>
                         </form-single>
                     </container-dialog>
                 </default-field>
