@@ -113,10 +113,10 @@
                     toSystem: artifactLog.toSystem,
                     logOriginPath: artifactLog.logOriginPath,
                     logFilePath: artifactLog.logFilePath,
+                    eventMessage: artifactLog.eventMessage,
                     content: contentObject
                 ]
-                ]]>
-            </script>
+            ]]></script>
 
             <!-- Create a new ArtifactLogIndex Record -->
             <entity-make-value entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex" map="indexMap"/>
@@ -134,6 +134,7 @@
             <parameter name="fromSystem"/>
             <parameter name="toSystem"/>
             <parameter name="logOriginPath"/>
+            <parameter name="eventMessage"/>
         </in-parameters>
         <out-parameters>
             <parameter name="filePath"/>
@@ -164,7 +165,7 @@
             ]]></script>
 
             <service-call name="create#co.hotwax.alc.ArtifactLog"
-                          in-map="[artifactLogId:artifactLogId, artifactLogTypeId:artifactLogTypeId, artifactLogIdTypeId:artifactLogIdTypeId, artifactLogIdSystem:artifactLogIdSystem, fromSystem:fromSystem, toSystem:toSystem, logOriginPath:logOriginPath, logFilePath:filePath]"
+                          in-map="[artifactLogId:artifactLogId, artifactLogTypeId:artifactLogTypeId, artifactLogIdTypeId:artifactLogIdTypeId, artifactLogIdSystem:artifactLogIdSystem, fromSystem:fromSystem, toSystem:toSystem, logOriginPath:logOriginPath, logFilePath:filePath, eventMessage:eventMessage]"
                           out-map="result"/>
             <set field="artifactEventId" from="result.artifactEventId"/>
             <return message="Artifact Log with artifactEventId: ${artifactEventId} has been created."/>

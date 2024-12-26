@@ -36,6 +36,7 @@ under the License.
         <field name="toSystem" type="id"/>
         <field name="logOriginPath" type="text-medium"/>
         <field name="logFilePath" type="text-medium"/>
+        <field name="eventMessage" type="text-medium"/>
 
         <relationship type="one" related="moqui.service.message.SystemMessageRemote">
             <key-map field-name="fromSystem" related="systemMessageRemoteId"/>
@@ -59,6 +60,7 @@ under the License.
         <field name="toSystem" type="id"/>
         <field name="logOriginPath" type="text-medium"/>
         <field name="logFilePath" type="text-medium"/>
+        <field name="eventMessage" type="text-medium"/>
         <field name="content" type="object"/>
     </entity>
 </entities>

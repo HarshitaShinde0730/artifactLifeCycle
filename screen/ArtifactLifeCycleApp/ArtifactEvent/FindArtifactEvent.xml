@@ -46,6 +46,7 @@ along with this software (see the LICENSE.md file). If not, see
             <field name="toSystem"><default-field><display/></default-field></field>
             <field name="logOriginPath"><default-field><display/></default-field></field>
             <field name="logFilePath"><default-field><display/></default-field></field>
+            <field name="eventMessage"><default-field><display/></default-field></field>
             <field name="content">
                 <default-field>
                     <container-dialog id="contentDialog" button-text="Content">
