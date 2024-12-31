@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-facade-xml type="ext-seed">
+    <!-- Seed Data for ArtifactLogType -->
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="SALES_ORDER" artifactLogTypeName="Sales Order"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="PRODUCT" artifactLogTypeName="Product"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="TRANSFER_ORDER" artifactLogTypeName="Transfer Order"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="PURCHASE_ORDER" artifactLogTypeName="Purchase Order"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="INVENTORY" artifactLogTypeName="Inventory"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="FULFILLMENT" artifactLogTypeName="Fulfillment"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="RETURN" artifactLogTypeName="Return"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="CYCLE_COUNT" artifactLogTypeName="Cycle Count"/>
+    <co.hotwax.alc.ArtifactLogType artifactLogTypeId="PARTY" artifactLogTypeName="Party"/>
+
+    <!-- Seed Data for SystemMessageRemote -->
+    <moqui.service.message.SystemMessageRemote systemMessageRemoteId="SHOPIFY" systemMessageRemoteName="Shopify"/>
+    <moqui.service.message.SystemMessageRemote systemMessageRemoteId="HOTWAX" systemMessageRemoteName="HotWax"/>
+    <moqui.service.message.SystemMessageRemote systemMessageRemoteId="NETSUITE" systemMessageRemoteName="NetSuite"/>
+    <moqui.service.message.SystemMessageRemote systemMessageRemoteId="LOOP" systemMessageRemoteName="Loop"/>
+    <moqui.service.message.SystemMessageRemote systemMessageRemoteId="ITERABLE" systemMessageRemoteName="Iterable"/>
+    <moqui.service.message.SystemMessageRemote systemMessageRemoteId="SHIPHAWK" systemMessageRemoteName="ShipHawk"/>
+
+    <!-- Seed Data for ArtifactLogIdType -->
+    <co.hotwax.alc.ArtifactLogIdType artifactLogIdTypeId="INTERNAL" artifactLogIdTypeName="Internal Id"/>
+    <co.hotwax.alc.ArtifactLogIdType artifactLogIdTypeId="COMMON" artifactLogIdTypeName="Commonly Known Id"/>
+</entity-facade-xml>
