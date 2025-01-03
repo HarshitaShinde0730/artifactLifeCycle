@@ -19,7 +19,9 @@ along with this software (see the LICENSE.md file). If not, see
         </description>
         <in-parameters>
             <parameter name="queryString" required="true"/>
-            <parameter name="additionalQueryMap" type="Map"/>
+            <parameter name="additionalQueryMap" type="Map">
+                <description>Map with key/value pairs. The key is the entity field name and the value is for the exact term search.</description>
+            </parameter>
             <parameter name="pageSize" type="Integer" default="20"/>
             <parameter name="pageIndex" type="Integer" default="0"/>
             <parameter name="pageNoLimit" type="Boolean" default="false"/>
@@ -28,7 +30,8 @@ along with this software (see the LICENSE.md file). If not, see
         <out-parameters>
             <parameter name="documentList" type="List"><parameter name="document" type="Map"/></parameter>
             <parameter name="documentListCount" type="Integer">
-                <description>The total count of hits, not just the limited number returned.</description></parameter>
+                <description>The total count of hits, not just the limited number returned.</description>
+            </parameter>
             <parameter name="documentListPageIndex" type="Integer"/>
             <parameter name="documentListPageSize" type="Integer"/>
             <parameter name="documentListPageMaxIndex" type="Integer"/>
@@ -64,7 +67,8 @@ along with this software (see the LICENSE.md file). If not, see
                                         query: queryString
                                     ]
                                 ]
-                            ]
+                            ],
+                            minimum_should_match: 1,
                         ]
                     ],
                     from : fromOffset,
@@ -77,7 +81,8 @@ along with this software (see the LICENSE.md file). If not, see
                 }
 
                 if (additionalQueryMap) {
-                    searchMap.query.bool.should.add(additionalQueryMap)
+                    List mustList = additionalQueryMap.findAll { it.value != null }.collect { key, value -> [term: [(key): value]] }
+                    if (!mustList.isEmpty()) searchMap.query.bool.put("must", mustList)
                 }
 
                 Map validateRespMap = elasticClient.validateQuery(index, searchMap.query, true)
