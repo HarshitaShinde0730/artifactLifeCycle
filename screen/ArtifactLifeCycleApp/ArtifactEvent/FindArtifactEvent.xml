@@ -20,15 +20,25 @@ along with this software (see the LICENSE.md file). If not, see
     </transition>
     <actions>
         <set field="queryString" from="anyField ?: '*' "/>
-        <service-call name="co.hotwax.alc.SearchServices.search#ArtifactLogIndexes" in-map="[queryString:queryString, pageIndex:pageIndex, pageSize:pageSize, pageNoLimit:pageNoLimit]" out-map="context"/>
+        <service-call name="co.hotwax.alc.SearchServices.search#ArtifactLogIndexes" in-map="[queryString:queryString, additionalQueryMap:[artifactLogTypeId: artifactLogTypeId], pageIndex:pageIndex, pageSize:pageSize, pageNoLimit:pageNoLimit]" out-map="context"/>
     </actions>
     <widgets>
         <label text="Find Artifact Event Page" type="h3"/>
         <form-single name="FindArtifactLogIndex" transition="." focus-field="anyField">
-            <field name="anyField"><default-field title="">
-                <text-line size="100"/></default-field></field>
+            <field name="anyField"><default-field title=""><text-line size="100"/></default-field></field>
+            <field name="artifactLogTypeId"><default-field title="Artifact Log Type">
+                <drop-down allow-empty="true">
+                    <entity-options key="${artifactLogTypeId}" text="${artifactLogTypeName}">
+                        <entity-find entity-name="co.hotwax.alc.ArtifactLogType"/>
+                    </entity-options>
+                </drop-down>
+            </default-field></field>
             <field name="submitButton"><default-field title="Search"><submit/></default-field></field>
-            <field-layout><field-row-big><field-ref name="anyField"/><field-ref name="submitButton"/></field-row-big></field-layout>
+            <field-layout><field-row-big>
+                <field-ref name="anyField"/>
+                <field-ref name="artifactLogTypeId"/>
+                <field-ref name="submitButton"/>
+            </field-row-big></field-layout>
         </form-single>
         <form-list name="ArtifactLogIndexList" list="documentList" skip-form="true" header-dialog="true" saved-finds="true"
                    show-xlsx-button="true" show-csv-button="true" show-page-size="true">
