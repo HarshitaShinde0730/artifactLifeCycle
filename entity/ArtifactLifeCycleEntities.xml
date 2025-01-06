@@ -37,7 +37,9 @@ under the License.
         <field name="logOriginPath" type="text-medium"/>
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-medium"/>
+        <field name="statusId" type="id" default="Open" enable-audit-log="true"/>
 
+        <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
         <relationship type="one" related="moqui.service.message.SystemMessageRemote">
             <key-map field-name="fromSystem" related="systemMessageRemoteId"/>
         </relationship>
@@ -62,5 +64,19 @@ under the License.
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-medium"/>
         <field name="content" type="object"/>
+        <field name="statusId" type="id" default="Open" enable-audit-log="true"/>
+
+        <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
+
+        <seed-data>
+            <moqui.basic.StatusType statusTypeId="ArtifactEvent" description="Artifact Event Status"/>
+            <moqui.basic.StatusItem statusId="Open" statusTypeId="ArtifactEvent" description="Open" sequenceNum="1"/>
+            <moqui.basic.StatusItem statusId="InProgress" statusTypeId="ArtifactEvent" description="In Progress" sequenceNum="2"/>
+            <moqui.basic.StatusItem statusId="Resolved" statusTypeId="ArtifactEvent" description="Resolved" sequenceNum="3"/>
+
+            <moqui.basic.StatusFlowTransition statusFlowId="Default" statusId="Open" toStatusId="InProgress" transitionName="Begin"/>
+            <moqui.basic.StatusFlowTransition statusFlowId="Default" statusId="Open" toStatusId="Resolved" transitionName="Resolved"/>
+            <moqui.basic.StatusFlowTransition statusFlowId="Default" statusId="InProgress" toStatusId="Resolved" transitionName="Resolved"/>
+        </seed-data>
     </entity>
 </entities>
