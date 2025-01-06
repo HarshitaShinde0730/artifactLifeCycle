@@ -148,9 +148,13 @@
             <set field="result" from="[:]"/>
             <set field="fileName" from="uploadedFile.getName()"/>
             <set field="dateTime" from="ec.l10n.format((ec.user.nowTimestamp), 'yyyy-MM-dd-HH-mm-ss-SSS')"/>
+            <set field="extIndex" from="fileName.lastIndexOf('.')"/>
+            <if condition="extIndex == -1">
+                <return message="No file extension found. Please upload a file with an extension, Supported extensions are: .csv, .json"/>
+            </if>
 
-            <set field="fileFormat" from="fileName.substring(fileName.lastIndexOf('.') + 1)"/>
-            <set field="fileName" from="fileName.substring(0, fileName.lastIndexOf('.'))"/>
+            <set field="fileFormat" from="fileName.substring(extIndex + 1)"/>
+            <set field="fileName" from="fileName.substring(0, extIndex)"/>
 
             <if condition="!'csv'.equals(fileFormat) &amp;&amp; !'json'.equals(fileFormat)">
                 <return message=".${fileFormat} file format is not supported. Please upload a CSV or JSON file."/>
