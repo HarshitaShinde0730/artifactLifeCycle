@@ -150,7 +150,7 @@
             <set field="dateTime" from="ec.l10n.format((ec.user.nowTimestamp), 'yyyy-MM-dd-HH-mm-ss-SSS')"/>
             <set field="extIndex" from="fileName.lastIndexOf('.')"/>
             <if condition="extIndex == -1">
-                <return message="No file extension found. Please upload a file with an .ext, Supported extensions are: .csv, .json"/>
+                <return message="No file extension found. Please upload a file with an extension, Supported extensions are: .csv, .json"/>
             </if>
 
             <set field="fileFormat" from="fileName.substring(extIndex + 1)"/>
