@@ -13,15 +13,9 @@ along with this software (see the LICENSE.md file). If not, see
 <http://creativecommons.org/publicdomain/zero/1.0/>.
 -->
 <services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-3.xsd">
-    <service verb="search" noun="ArtifactLogIndexes">
-        <description>
-            Search for ArtifactLogIndex
-        </description>
+    <service verb="search" noun="ArtifactLogDocuments" type="interface">
+        <description>This is interface service for searching Artifact Logs</description>
         <in-parameters>
-            <parameter name="queryString" required="true"/>
-            <parameter name="additionalQueryMap" type="Map">
-                <description>Map with key/value pairs. The key is the entity field name and the value is for the exact term search.</description>
-            </parameter>
             <parameter name="pageSize" type="Integer" default="20"/>
             <parameter name="pageIndex" type="Integer" default="0"/>
             <parameter name="pageNoLimit" type="Boolean" default="false"/>
@@ -38,6 +32,17 @@ along with this software (see the LICENSE.md file). If not, see
             <parameter name="documentListPageRangeLow" type="Integer"/>
             <parameter name="documentListPageRangeHigh" type="Integer"/>
         </out-parameters>
+    </service>
+
+    <service verb="search" noun="ArtifactLogIndexes">
+        <description>Search for ArtifactLogIndex</description>
+        <implements service="co.hotwax.alc.SearchServices.search#ArtifactLogDocuments"/>
+        <in-parameters>
+            <parameter name="queryString" required="true"/>
+            <parameter name="additionalQueryMap" type="Map">
+                <description>Map with key/value pairs. The key is the entity field name and the value is for the exact term search.</description>
+            </parameter>
+        </in-parameters>
         <actions>
             <set field="queryString" from="queryString ? elasticQueryAutoWildcard(queryString, true) : '*'"/>
             <if condition="queryString"><set field="queryString" from="'(' + queryString + ')'"/></if>
@@ -77,7 +82,7 @@ along with this software (see the LICENSE.md file). If not, see
                 ]
 
                 if (artifactEventId) {
-                    searchMap.query.bool.must_not = [[match: [artifactEventId: artifactEventId]]]
+                    searchMap.query.bool.must_not = [[term: [artifactEventId: artifactEventId]]]
                 }
 
                 if (additionalQueryMap) {
