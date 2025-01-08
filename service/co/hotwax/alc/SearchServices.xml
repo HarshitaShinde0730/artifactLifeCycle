@@ -16,6 +16,10 @@ along with this software (see the LICENSE.md file). If not, see
     <service verb="search" noun="ArtifactLogDocuments" type="interface">
         <description>This is interface service for searching Artifact Logs</description>
         <in-parameters>
+            <parameter name="queryString" required="true"/>
+            <parameter name="additionalQueryMap" type="Map">
+                <description>Map with key/value pairs. The key is the entity field name and the value is for the exact term search.</description>
+            </parameter>
             <parameter name="pageSize" type="Integer" default="20"/>
             <parameter name="pageIndex" type="Integer" default="0"/>
             <parameter name="pageNoLimit" type="Boolean" default="false"/>
@@ -37,12 +41,6 @@ along with this software (see the LICENSE.md file). If not, see
     <service verb="search" noun="ArtifactLogIndexes">
         <description>Search for ArtifactLogIndex</description>
         <implements service="co.hotwax.alc.SearchServices.search#ArtifactLogDocuments"/>
-        <in-parameters>
-            <parameter name="queryString" required="true"/>
-            <parameter name="additionalQueryMap" type="Map">
-                <description>Map with key/value pairs. The key is the entity field name and the value is for the exact term search.</description>
-            </parameter>
-        </in-parameters>
         <actions>
             <set field="queryString" from="queryString ? elasticQueryAutoWildcard(queryString, true) : '*'"/>
             <if condition="queryString"><set field="queryString" from="'(' + queryString + ')'"/></if>
@@ -120,6 +118,75 @@ along with this software (see the LICENSE.md file). If not, see
                 if (documentListPageRangeHigh > documentListCount) documentListPageRangeHigh = documentListCount
 
             ]]></script>
+        </actions>
+    </service>
+    
+    <service verb="search" noun="DistantArtifactLogs">
+        <implements service="co.hotwax.alc.SearchServices.search#ArtifactLogDocuments"/>
+        <actions>
+            <set field="queryString" from="queryString ? elasticQueryAutoWildcard(queryString, true) : '*'"/>
+            <if condition="queryString"><set field="queryString" from="'(' + queryString + ')'"/></if>
+
+            <script><![CDATA[
+                ed = ec.entity.getEntityDefinition("co.hotwax.alc.ArtifactLogIndex")
+                edf = ed.entityInfo.datasourceFactory
+                indexName = edf.getIndexName(ed)
+                def elasticClient = ec.factory.elastic.getClient(edf.clusterName)
+
+                if(elasticClient == null) {
+                    ec.logger.info("No Elastic Client found for cluster name ${edf.clusterName}, not indexing documents")
+                    return
+                }
+
+                // In elastic/open search, the aggregations are required to be named
+                def distinctAggName = "distinct"
+                def distantAggName = "distant"
+
+                def searchMap = [
+                    query: [ bool: [
+                        should:[[query_string: [query: queryString]]],
+                        minimum_should_match: 1,
+                    ]],
+                    aggs: [(distinctAggName): [
+                        terms: [
+                            field: 'artifactLogId',
+                            size: 10000
+                        ],
+                        aggs: [(distantAggName): [top_hits: [
+                            sort: [['lastUpdatedStamp': 'desc']],
+                            size: 1 // for getting most distant artifact
+                        ]]]
+                    ]],
+                    sort : ["_score"]
+                ]
+
+                if (!queryString) {
+                    searchMap.aggs.(distinctAggName).terms.put("size", 20)
+                }
+
+                if (additionalQueryMap) {
+                    List mustList = additionalQueryMap.findAll { it.value != null }.collect { key, value -> [term: [(key): value]] }
+                    if (!mustList.isEmpty()) searchMap.query.bool.put("must", mustList)
+                }
+
+                Map validateRespMap = elasticClient.validateQuery(index, searchMap.query, true)
+                if (validateRespMap != null) {
+                    ec.message.addMessage("Invalid search: ${queryString}", "danger")
+                    documentListCount = 0
+                    return
+                }
+
+                Map resultMap = elasticClient.search(indexName, searchMap)
+                List<Map> bucketsList = (List) resultMap.aggregations.(distinctAggName).buckets
+                documentList = []
+
+                for (Map bucket in bucketsList) {
+                    Map distantHit = (Map) bucket.(distantAggName).hits.hits[0]
+                    Map document = (Map) distantHit._source
+                    document._id = distantHit._id
+                    documentList.add(document)
+                }
+                ]]></script>
         </actions>
     </service>
 </services>
