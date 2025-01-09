@@ -121,7 +121,7 @@ along with this software (see the LICENSE.md file). If not, see
         </actions>
     </service>
     
-    <service verb="search" noun="DistantArtifactLogs">
+    <service verb="search" noun="RecentArtifactLogs">
         <implements service="co.hotwax.alc.SearchServices.search#ArtifactLogDocuments"/>
         <actions>
             <set field="queryString" from="queryString ? elasticQueryAutoWildcard(queryString, true) : '*'"/>
@@ -140,7 +140,7 @@ along with this software (see the LICENSE.md file). If not, see
 
                 // In elastic/open search, the aggregations are required to be named
                 def distinctAggName = "distinct"
-                def distantAggName = "distant"
+                def recentAggName = "recent"
 
                 def searchMap = [
                     query: [ bool: [
@@ -152,9 +152,9 @@ along with this software (see the LICENSE.md file). If not, see
                             field: 'artifactLogId',
                             size: 10000
                         ],
-                        aggs: [(distantAggName): [top_hits: [
+                        aggs: [(recentAggName): [top_hits: [
                             sort: [['lastUpdatedStamp': 'desc']],
-                            size: 1 // for getting most distant artifact
+                            size: 1 // for getting only most recent artifact
                         ]]]
                     ]],
                     sort : ["_score"]
@@ -181,9 +181,9 @@ along with this software (see the LICENSE.md file). If not, see
                 documentList = []
 
                 for (Map bucket in bucketsList) {
-                    Map distantHit = (Map) bucket.(distantAggName).hits.hits[0]
-                    Map document = (Map) distantHit._source
-                    document._id = distantHit._id
+                    Map recentHit = (Map) bucket.(recentAggName).hits.hits[0]
+                    Map document = (Map) recentHit._source
+                    document._id = recentHit._id
                     documentList.add(document)
                 }
                 ]]></script>

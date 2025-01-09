@@ -20,7 +20,7 @@ along with this software (see the LICENSE.md file). If not, see
     </transition>
     <actions>
         <set field="queryString" from="anyField ?: '*' "/>
-        <service-call name="co.hotwax.alc.SearchServices.search#DistantArtifactLogs" in-map="[queryString:queryString, additionalQueryMap:[artifactLogTypeId: artifactLogTypeId], pageNoLimit:!anyField]" out-map="context"/>
+        <service-call name="co.hotwax.alc.SearchServices.search#RecentArtifactLogs" in-map="[queryString:queryString, additionalQueryMap:[artifactLogTypeId: artifactLogTypeId], pageNoLimit:!anyField]" out-map="context"/>
     </actions>
     <widgets>
         <label text="Find Artifact Event Page" type="h3"/>
