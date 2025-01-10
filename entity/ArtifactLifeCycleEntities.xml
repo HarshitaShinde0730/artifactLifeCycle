@@ -79,4 +79,22 @@ under the License.
             <moqui.basic.StatusFlowTransition statusFlowId="Default" statusId="InProgress" toStatusId="Resolved" transitionName="Resolved"/>
         </seed-data>
     </entity>
+    
+    <view-entity entity-name="ArtifactStatusAndFlowTransition" package="co.hotwax.alc">
+        <member-entity entity-alias="sft" entity-name="moqui.basic.StatusFlowTransition"/>
+        <member-entity entity-alias="fsi" entity-name="moqui.basic.StatusItem" join-from-alias="sft">
+            <key-map field-name="statusId"/>
+        </member-entity>
+        <member-entity entity-alias="tsi" entity-name="moqui.basic.StatusItem" join-from-alias="sft">
+            <key-map field-name="toStatusId" related="statusId"/>
+        </member-entity>
+
+        <alias-all entity-alias="sft"/>
+        <alias-all entity-alias="fsi" prefix="from"/>
+        <alias-all entity-alias="tsi" prefix="to"/>
+
+        <entity-condition>
+            <econdition field-name="statusTypeId" entity-alias="fsi" value="ArtifactEvent"/>
+        </entity-condition>
+    </view-entity>
 </entities>
