@@ -106,6 +106,7 @@ along with this software (see the LICENSE.md file). If not, see
                                 <header-field show-order-by="true"/>
                                 <default-field><drop-down submit-on-select="true" no-current-selected-key="${status.statusId}" current-description="${status.description} [${status.statusId}]">
                                     <entity-options key="${toStatusId}" text="${toDescription} [${toStatusId}]">
+                                        <!-- TODO: Fetch the complete list of ArtifactStatusAndFlowTransition at once instead of for each row -->
                                         <entity-find entity-name="co.hotwax.alc.ArtifactStatusAndFlowTransition" cache="true">
                                             <econdition field-name="fromStatusId" from="status.statusId"/>
                                             <select-field field-name="toStatusId,toDescription"/>
