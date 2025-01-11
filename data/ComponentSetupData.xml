@@ -3,6 +3,7 @@
 <entity-facade-xml type="ext-seed">
     <artifactGroups artifactGroupId="ALC_APP" description="Artifact Life Cycle app">
         <artifacts artifactName="component://artifactLifeCycle/screen/ArtifactLifeCycleApp.xml" artifactTypeEnumId="AT_XML_SCREEN" inheritAuthz="Y"/>
+        <artifacts artifactName="/artifact-life-cycle" artifactTypeEnumId="AT_REST_PATH" inheritAuthz="Y"/>
         <!-- Full permissions for the ADMIN user group -->
         <authz artifactAuthzId="ALC_APP_ADMIN" userGroupId="ADMIN" authzTypeEnumId="AUTHZT_ALWAYS" authzActionEnumId="AUTHZA_ALL"/>
     </artifactGroups>

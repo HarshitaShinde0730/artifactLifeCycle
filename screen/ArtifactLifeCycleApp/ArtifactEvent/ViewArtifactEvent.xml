@@ -22,11 +22,30 @@ along with this software (see the LICENSE.md file). If not, see
         <default-response url="."/>
     </transition>
 
+    <transition name="updateStatus">
+        <actions>
+            <entity-find-one entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="updateLogIndex" for-update="true"/>
+            <set field="updateLogIndex.statusId" from="statusId"/>
+            <entity-update value-field="updateLogIndex"/>
+        </actions>
+        <default-response type="none"/>
+    </transition>
+
     <actions>
         <entity-find-one entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex"/>
         <if condition="!artifactLogIndex">
             <return message="Artifact Log ${artifactEventId} is not found"/>
         </if>
+
+        <entity-find entity-name="moqui.basic.StatusItem" list="artifactStatusList">
+            <econdition field-name="statusTypeId" value="ArtifactEvent"/>
+            <select-field field-name="toStatusId,toDescription"/>
+        </entity-find>
+        <filter-map-list list="artifactStatusList" to-list="currentStatus">
+            <field-map field-name="statusId" from="artifactLogIndex.statusId"/>
+        </filter-map-list>
+        <set field="artifactStatus" from="currentStatus[0]"/>
+
         <set field="artifactLogId" from="artifactLogIndex.artifactLogId"/>
         <service-call name="co.hotwax.alc.SearchServices.search#ArtifactLogIndexes" out-map="context" in-map="context + [queryString:artifactLogId]"/>
     </actions>
@@ -37,9 +56,19 @@ along with this software (see the LICENSE.md file). If not, see
                 <container-box>
                     <box-header title="Artifact Event ${artifactLogIndex.artifactEventId} Details"/>
                     <box-body>
-                        <form-single name="ViewArtifactEvent" map="artifactLogIndex">
-                            <auto-fields-entity entity-name="co.hotwax.alc.ArtifactLogIndex" include="nonpk" field-type="display"/>
+                        <form-single name="ViewArtifactEvent" map="artifactLogIndex" background-submit="true" transition="updateStatus">
+                            <auto-fields-entity entity-name="co.hotwax.alc.ArtifactLogIndex" field-type="display"><exclude field-name="statusId"/></auto-fields-entity>
                             <field name="content"><default-field><text-area rows="10" read-only="true"/></default-field></field>
+                            <field name="statusId"><default-field>
+                                <drop-down submit-on-select="true" no-current-selected-key="${artifactStatus.statusId}" current-description="${artifactStatus.description} [${artifactStatus.statusId}]">
+                                    <entity-options key="${toStatusId}" text="${toDescription} [${toStatusId}]">
+                                        <entity-find entity-name="co.hotwax.alc.ArtifactStatusAndFlowTransition" cache="true">
+                                            <econdition field-name="fromStatusId" from="statusId"/>
+                                            <select-field field-name="toStatusId,toDescription"/>
+                                        </entity-find>
+                                    </entity-options>
+                                </drop-down>
+                            </default-field></field>
                         </form-single>
                     </box-body>
                 </container-box>
@@ -55,16 +84,38 @@ along with this software (see the LICENSE.md file). If not, see
                 <container-box>
                     <box-header title="Related Artifact Events"/>
                     <box-body>
-                        <form-list name="ArtifactLogIndexList" list="documentList" skip-form="true" show-page-size="true">
+                        <form-list name="ArtifactLogIndexList" list="documentList" show-page-size="true" transition="updateStatus">
+                            <row-actions>
+                                <filter-map-list list="artifactStatusList" to-list="currentRowStatus">
+                                    <field-map field-name="statusId" from="statusId"/>
+                                </filter-map-list>
+                                <set field="status" from="currentRowStatus[0]"/>
+                            </row-actions>
                             <field name="artifactEventId">
+                                <header-field show-order-by="true"/>
                                 <default-field><link url="viewArtifactEvent" text="${artifactEventId}"/></default-field>
                             </field>
-                            <field name="artifactLogId"><default-field><display/></default-field></field>
-                            <field name="artifactLogTypeId"><default-field><display/></default-field></field>
+                            <field name="artifactLogId">
+                                <header-field show-order-by="true"/>
+                                <default-field><display/></default-field>
+                            </field>
+                            <field name="artifactLogTypeId">
+                                <header-field show-order-by="true"/>
+                                <default-field><display/></default-field></field>
+                            <field name="statusId">
+                                <header-field show-order-by="true"/>
+                                <default-field><drop-down submit-on-select="true" no-current-selected-key="${status.statusId}" current-description="${status.description} [${status.statusId}]">
+                                    <entity-options key="${toStatusId}" text="${toDescription} [${toStatusId}]">
+                                        <!-- TODO: Fetch the complete list of ArtifactStatusAndFlowTransition at once instead of for each row -->
+                                        <entity-find entity-name="co.hotwax.alc.ArtifactStatusAndFlowTransition" cache="true">
+                                            <econdition field-name="fromStatusId" from="status.statusId"/>
+                                            <select-field field-name="toStatusId,toDescription"/>
+                                        </entity-find>
+                                    </entity-options>
+                                </drop-down></default-field>
+                            </field>
                             <field name="fromSystem"><default-field><display/></default-field></field>
                             <field name="toSystem"><default-field><display/></default-field></field>
-                            <field name="logOriginPath"><default-field><display/></default-field></field>
-                            <field name="logFilePath"><default-field><display/></default-field></field>
                             <field name="eventMessage"><default-field><display/></default-field></field>
                             <field name="content">
                                 <default-field>
