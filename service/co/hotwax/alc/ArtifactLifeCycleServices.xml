@@ -130,15 +130,8 @@
 
     <service verb="create" noun="ArtifactLog">
         <in-parameters>
+            <auto-parameters entity-name="co.hotwax.alc.ArtifactLog" include="nonpk"/>
             <parameter name="uploadedFile" type="org.apache.commons.fileupload.FileItem" required="true"/>
-            <parameter name="artifactLogId"/>
-            <parameter name="artifactLogTypeId"/>
-            <parameter name="artifactLogIdTypeId"/>
-            <parameter name="artifactLogIdSystem"/>
-            <parameter name="fromSystem"/>
-            <parameter name="toSystem"/>
-            <parameter name="logOriginPath"/>
-            <parameter name="eventMessage"/>
         </in-parameters>
         <out-parameters>
             <parameter name="filePath"/>
@@ -172,11 +165,9 @@
                 }
             ]]></script>
 
-            <service-call name="create#co.hotwax.alc.ArtifactLog"
-                          in-map="[artifactLogId:artifactLogId, artifactLogTypeId:artifactLogTypeId, artifactLogIdTypeId:artifactLogIdTypeId, artifactLogIdSystem:artifactLogIdSystem, fromSystem:fromSystem, toSystem:toSystem, logOriginPath:logOriginPath, logFilePath:filePath, eventMessage:eventMessage]"
-                          out-map="result"/>
-            <set field="artifactEventId" from="result.artifactEventId"/>
-            <return message="Artifact Log with artifactEventId: ${artifactEventId} has been created."/>
+            <entity-make-value entity-name="co.hotwax.alc.ArtifactLog" value-field="artifactLogValue" map="context"/>
+            <service-call name="create#co.hotwax.alc.ArtifactLog" in-map="artifactLogValue" out-map="result"/>
+            <return message="Artifact Log with artifactEventId: ${result.artifactEventId} has been created."/>
         </actions>
     </service>
 </services>
