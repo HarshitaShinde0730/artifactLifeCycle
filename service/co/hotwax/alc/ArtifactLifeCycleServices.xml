@@ -59,6 +59,7 @@
             <entity-find-one entity-name="co.hotwax.alc.ArtifactLog" value-field="artifactLog"/>
             <if condition="artifactLog == null"><return error="true" message="Artifact Log is not found"/></if>
 
+            <log message="=================== ${artifactLog} ==================="/>
             <set field="contentType" from="ec.resource.getContentType(artifactLog.logFilePath)"/>
             <set field="contentStream" from="ec.resource.getLocationReference(artifactLog.logFilePath).openStream()"/>
 
@@ -105,26 +106,11 @@
                     ec.message.addError("${contentType} file format is not supported. Please upload a JSON or CSV")
                     return
                 }
-
-                // Prepare the index map for creating an ArtifactLogIndex record
-                indexMap = [
-                    artifactEventId: artifactLog.artifactEventId,
-                    artifactLogId: artifactLog.artifactLogId,
-                    artifactLogTypeId: artifactLog.artifactLogTypeId,
-                    artifactLogIdTypeId: artifactLog.artifactLogIdTypeId,
-                    artifactLogIdSystem: artifactLog.artifactLogIdSystem,
-                    fromSystem: artifactLog.fromSystem,
-                    toSystem: artifactLog.toSystem,
-                    logOriginPath: artifactLog.logOriginPath,
-                    logFilePath: artifactLog.logFilePath,
-                    eventMessage: artifactLog.eventMessage,
-                    content: contentObject
-                ]
             ]]></script>
 
             <!-- Create a new ArtifactLogIndex Record -->
-            <entity-make-value entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex" map="indexMap"/>
-            <entity-create value-field="artifactLogIndex"/>
+            <entity-make-value entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex" map="[content:contentObject] + artifactLog"/>
+            <service-call name="create#co.hotwax.alc.ArtifactLogIndex" in-map="artifactLogIndex"/>
         </actions>
     </service>
 
