@@ -153,8 +153,8 @@
                 <return message=".${fileFormat} file format is not supported. Please upload a CSV or JSON file."/>
             </if>
 
-            <set field="filePath" type="String" value="runtime://ArtifactLogs/${fileName}_${dateTime}.${fileFormat}"/>
-            <set field="fileReference" from="ec.resource.getLocationReference(filePath)"/>
+            <set field="logFilePath" type="String" value="runtime://ArtifactLogs/${fileName}_${dateTime}.${fileFormat}"/>
+            <set field="fileReference" from="ec.resource.getLocationReference(logFilePath)"/>
 
             <script><![CDATA[
                 fileStream = uploadedFile.getInputStream()
