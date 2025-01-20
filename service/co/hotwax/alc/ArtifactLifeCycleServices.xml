@@ -105,40 +105,18 @@
                     ec.message.addError("${contentType} file format is not supported. Please upload a JSON or CSV")
                     return
                 }
-
-                // Prepare the index map for creating an ArtifactLogIndex record
-                indexMap = [
-                    artifactEventId: artifactLog.artifactEventId,
-                    artifactLogId: artifactLog.artifactLogId,
-                    artifactLogTypeId: artifactLog.artifactLogTypeId,
-                    artifactLogIdTypeId: artifactLog.artifactLogIdTypeId,
-                    artifactLogIdSystem: artifactLog.artifactLogIdSystem,
-                    fromSystem: artifactLog.fromSystem,
-                    toSystem: artifactLog.toSystem,
-                    logOriginPath: artifactLog.logOriginPath,
-                    logFilePath: artifactLog.logFilePath,
-                    eventMessage: artifactLog.eventMessage,
-                    content: contentObject
-                ]
             ]]></script>
 
             <!-- Create a new ArtifactLogIndex Record -->
-            <entity-make-value entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex" map="indexMap"/>
-            <entity-create value-field="artifactLogIndex"/>
+            <entity-make-value entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex" map="[content:contentObject] + artifactLog"/>
+            <service-call name="create#co.hotwax.alc.ArtifactLogIndex" in-map="artifactLogIndex"/>
         </actions>
     </service>
 
     <service verb="create" noun="ArtifactLog">
         <in-parameters>
+            <auto-parameters entity-name="co.hotwax.alc.ArtifactLog" include="nonpk"/>
             <parameter name="uploadedFile" type="org.apache.commons.fileupload.FileItem" required="true"/>
-            <parameter name="artifactLogId"/>
-            <parameter name="artifactLogTypeId"/>
-            <parameter name="artifactLogIdTypeId"/>
-            <parameter name="artifactLogIdSystem"/>
-            <parameter name="fromSystem"/>
-            <parameter name="toSystem"/>
-            <parameter name="logOriginPath"/>
-            <parameter name="eventMessage"/>
         </in-parameters>
         <out-parameters>
             <parameter name="filePath"/>
@@ -160,8 +138,8 @@
                 <return message=".${fileFormat} file format is not supported. Please upload a CSV or JSON file."/>
             </if>
 
-            <set field="filePath" type="String" value="runtime://ArtifactLogs/${fileName}_${dateTime}.${fileFormat}"/>
-            <set field="fileReference" from="ec.resource.getLocationReference(filePath)"/>
+            <set field="logFilePath" type="String" value="runtime://ArtifactLogs/${fileName}_${dateTime}.${fileFormat}"/>
+            <set field="fileReference" from="ec.resource.getLocationReference(logFilePath)"/>
 
             <script><![CDATA[
                 fileStream = uploadedFile.getInputStream()
@@ -172,11 +150,9 @@
                 }
             ]]></script>
 
-            <service-call name="create#co.hotwax.alc.ArtifactLog"
-                          in-map="[artifactLogId:artifactLogId, artifactLogTypeId:artifactLogTypeId, artifactLogIdTypeId:artifactLogIdTypeId, artifactLogIdSystem:artifactLogIdSystem, fromSystem:fromSystem, toSystem:toSystem, logOriginPath:logOriginPath, logFilePath:filePath, eventMessage:eventMessage]"
-                          out-map="result"/>
-            <set field="artifactEventId" from="result.artifactEventId"/>
-            <return message="Artifact Log with artifactEventId: ${artifactEventId} has been created."/>
+            <entity-make-value entity-name="co.hotwax.alc.ArtifactLog" value-field="artifactLogValue" map="context"/>
+            <service-call name="create#co.hotwax.alc.ArtifactLog" in-map="artifactLogValue" out-map="result"/>
+            <return message="Artifact Log with artifactEventId: ${result.artifactEventId} has been created."/>
         </actions>
     </service>
 </services>

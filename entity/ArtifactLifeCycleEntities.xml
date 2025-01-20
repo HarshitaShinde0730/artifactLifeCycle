@@ -37,7 +37,7 @@ under the License.
         <field name="logOriginPath" type="text-medium"/>
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-medium"/>
-        <field name="statusId" type="id" default="Open" enable-audit-log="true"/>
+        <field name="statusId" type="id" default="'Open'" enable-audit-log="true"/>
 
         <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
         <relationship type="one" related="moqui.service.message.SystemMessageRemote">
@@ -64,7 +64,7 @@ under the License.
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-medium"/>
         <field name="content" type="object"/>
-        <field name="statusId" type="id" default="Open" enable-audit-log="true"/>
+        <field name="statusId" type="id" default="'Open'" enable-audit-log="true"/>
 
         <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
 
