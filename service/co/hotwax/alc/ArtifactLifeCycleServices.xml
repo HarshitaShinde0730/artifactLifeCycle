@@ -59,7 +59,6 @@
             <entity-find-one entity-name="co.hotwax.alc.ArtifactLog" value-field="artifactLog"/>
             <if condition="artifactLog == null"><return error="true" message="Artifact Log is not found"/></if>
 
-            <log message="=================== ${artifactLog} ==================="/>
             <set field="contentType" from="ec.resource.getContentType(artifactLog.logFilePath)"/>
             <set field="contentStream" from="ec.resource.getLocationReference(artifactLog.logFilePath).openStream()"/>
 
