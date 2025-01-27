@@ -32,6 +32,7 @@ under the License.
         <field name="artifactLogTypeId" type="id"/>
         <field name="artifactLogIdTypeId" type="id"/>
         <field name="artifactLogIdSystem" type="id"/>
+        <field name="tenantGroupId" type="id"/>
         <field name="fromSystem" type="id"/>
         <field name="toSystem" type="id"/>
         <field name="logOriginPath" type="text-medium"/>
@@ -49,6 +50,9 @@ under the License.
         <relationship type="one" related="co.hotwax.alc.ArtifactLogType">
             <key-map field-name="artifactLogTypeId"/>
         </relationship>
+        <relationship type="one" related="moqui.security.UserGroup">
+            <key-map field-name="tenantGroupId"/>
+        </relationship>
     </entity>
 
     <!-- This is an Index entity for the ArtifactLog in OpenSearch -->
@@ -58,6 +62,7 @@ under the License.
         <field name="artifactLogTypeId" type="id"/>
         <field name="artifactLogIdTypeId" type="id"/>
         <field name="artifactLogIdSystem" type="id"/>
+        <field name="tenantGroupId" type="id"/>
         <field name="fromSystem" type="id"/>
         <field name="toSystem" type="id"/>
         <field name="logOriginPath" type="text-medium"/>
@@ -67,6 +72,9 @@ under the License.
         <field name="statusId" type="id" default="'Open'" enable-audit-log="true"/>
 
         <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
+        <relationship type="one" related="moqui.security.UserGroup">
+            <key-map field-name="tenantGroupId"/>
+        </relationship>
 
         <seed-data>
             <moqui.basic.StatusType statusTypeId="ArtifactEvent" description="Artifact Event Status"/>

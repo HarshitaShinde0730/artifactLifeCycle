@@ -117,12 +117,22 @@
         <in-parameters>
             <auto-parameters entity-name="co.hotwax.alc.ArtifactLog" include="nonpk"/>
             <parameter name="uploadedFile" type="org.apache.commons.fileupload.FileItem" required="true"/>
+            <!-- TODO: Do validation -->
         </in-parameters>
         <out-parameters>
             <parameter name="filePath"/>
             <parameter name="artifactEventId"/>
         </out-parameters>
         <actions>
+            <!-- Validate the logged-in user is a member of tenant group -->
+            <entity-find-count entity-name="moqui.security.UserGroupAndMember" count-field="userGroupCount" cache="true">
+                <econdition field-name="userId" from="ec.user.userAccount.userId"/>
+                <econdition field-name="groupTypeEnumId" value="UgtTenant"/>
+                <econdition field-name="userGroupId" from="tenantGroupId"/>
+                <date-filter/>
+            </entity-find-count>
+            <if condition="userGroupCount == 0"><then><return error="true" message="You must be a member of the tenant group to create an Artifact Log"/></then></if>
+
             <set field="result" from="[:]"/>
             <set field="fileName" from="uploadedFile.getName()"/>
             <set field="dateTime" from="ec.l10n.format((ec.user.nowTimestamp), 'yyyy-MM-dd-HH-mm-ss-SSS')"/>
