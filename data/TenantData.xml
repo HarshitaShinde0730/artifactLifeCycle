@@ -3,12 +3,11 @@
 <entity-facade-xml type="ext-seed">
     <moqui.basic.Enumeration description="Tenant" enumId="UgtTenant" enumTypeId="UserGroupType"/>
 
-    <moqui.security.UserGroup userGroupId="AlcAllTenant" description="ALC All Tenant User Group" groupTypeEnumId="UgtTenant"/>
-    <moqui.security.UserGroup userGroupId="AlcAdmin" description="ALC Admin User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="AllTenantAuth" description="All Tenant User Group for similar authorization" groupTypeEnumId="UgtTenant"/>
 
-    <moqui.security.UserGroup userGroupId="AlcUcgTenant" description="UCG User Group" groupTypeEnumId="UgtTenant"/>
-    <moqui.security.UserGroup userGroupId="AlcGorjanaTenant" description="Gorjana User Group" groupTypeEnumId="UgtTenant"/>
-    <moqui.security.UserGroup userGroupId="AlcKreweTenant" description="Krewe User Group" groupTypeEnumId="UgtTenant"/>
-    <moqui.security.UserGroup userGroupId="AlcADOCTenant" description="ADOC User Group" groupTypeEnumId="UgtTenant"/>
-    <moqui.security.UserGroup userGroupId="AlcNECTenant" description="NEC User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="Ucg" description="UCG User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="Gorjana" description="Gorjana User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="Krewe" description="Krewe User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="ADOC" description="ADOC User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="NEC" description="NEC User Group" groupTypeEnumId="UgtTenant"/>
 </entity-facade-xml>
