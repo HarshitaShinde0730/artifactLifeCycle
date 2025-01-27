@@ -5,7 +5,7 @@
 
     <moqui.security.UserGroup userGroupId="AllTenantAuth" description="All Tenant User Group for similar authorization" groupTypeEnumId="UgtTenant"/>
 
-    <moqui.security.UserGroup userGroupId="Ucg" description="UCG User Group" groupTypeEnumId="UgtTenant"/>
+    <moqui.security.UserGroup userGroupId="UCG" description="UCG User Group" groupTypeEnumId="UgtTenant"/>
     <moqui.security.UserGroup userGroupId="Gorjana" description="Gorjana User Group" groupTypeEnumId="UgtTenant"/>
     <moqui.security.UserGroup userGroupId="Krewe" description="Krewe User Group" groupTypeEnumId="UgtTenant"/>
     <moqui.security.UserGroup userGroupId="ADOC" description="ADOC User Group" groupTypeEnumId="UgtTenant"/>
