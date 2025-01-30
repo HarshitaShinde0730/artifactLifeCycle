@@ -173,8 +173,7 @@ along with this software (see the LICENSE.md file). If not, see
                         if(!value) return // skip if no value
                         def operator = searchFieldsOp?.("${field}_op")
                         if (operator == 'in') {
-                            def values = value.split(",")
-                            mustList.add([terms: [(field): values]])
+                            mustList.add([terms: [(field): value]])
                         } else if (!operator) {
                             mustList.add([term: [(field): value]])
                         }

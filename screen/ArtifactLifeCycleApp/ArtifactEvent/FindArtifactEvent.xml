@@ -22,11 +22,17 @@ along with this software (see the LICENSE.md file). If not, see
         <set field="statusId" from="statusId ?: 'Open'"/>
         <set field="statusId_op" value="in"/>
         <set field="queryString" from="anyField ?: '*' "/>
+        <set field="aliEd" from="ec.entity.getEntityDefinition('co.hotwax.alc.ArtifactLogIndex')"/>
         <script>
             Map additionalQueryMap = [
-                fields: [artifactLogTypeId:artifactLogTypeId, statusId:statusId],
+                fields: [artifactLogTypeId:artifactLogTypeId, statusId:statusId.split(',')],
                 operators: [artifactLogTypeId_op:artifactLogTypeId_op, statusId_op:statusId_op]
             ]
+            def cond = ec.entity.ecfi.getEci().artifactExecutionFacade.filterFindForUser(aliEd, null)?.find {it.getFieldName() == 'tenantGroupId'}
+            if (cond) {
+                additionalQueryMap.fields.put('tenantGroupId', cond.getValue())
+                additionalQueryMap.operators.put('tenantGroupId_op', cond.getOperator().toString().toLowerCase())
+            }
         </script>
         <service-call name="co.hotwax.alc.SearchServices.search#RecentArtifactLogs" in-map="[queryString:queryString, additionalQueryMap:additionalQueryMap, pageNoLimit:!anyField]" out-map="context"/>
     </actions>
