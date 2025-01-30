@@ -32,10 +32,21 @@ along with this software (see the LICENSE.md file). If not, see
     </transition>
 
     <actions>
-        <entity-find-one entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="artifactLogIndex"/>
-        <if condition="!artifactLogIndex">
-            <return message="Artifact Log ${artifactEventId} is not found"/>
+        <script>
+            aliEntityName = 'co.hotwax.alc.ArtifactLogIndex'
+            entityFilterCondList = ec.entity.ecfi.getEci().artifactExecutionFacade
+                    .filterFindForUser(ec.entity.getEntityDefinition(aliEntityName), null)
+        </script>
+
+        <entity-find entity-name="${aliEntityName}" list="artifactLogIndexList" limit="1">
+            <econdition field-name="artifactEventId"/>
+            <econdition-object field="entityFilterCondList"/>
+        </entity-find>
+
+        <if condition="!artifactLogIndexList">
+            <return message="Artifact Log ${artifactEventId} is not found." type="danger" error="true" public="true"/>
         </if>
+        <set field="artifactLogIndex" from="artifactLogIndexList.get(0)"/>
 
         <entity-find entity-name="moqui.basic.StatusItem" list="artifactStatusList">
             <econdition field-name="statusTypeId" value="ArtifactEvent"/>
