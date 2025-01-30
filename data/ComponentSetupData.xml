@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <entity-facade-xml type="ext-seed">
+    <moqui.security.EntityFilterSet entityFilterSetId="ALC_ENTITY_FS" description="Artifact Life Cycle entity filters" applyCond="!ec.user.isInGroup('ADMIN')">
+        <filters entityFilterId="AL_FILTER" entityName="co.hotwax.alc.ArtifactLog"
+             filterMap="[tenantGroupId:ec.service.sync().name('co.hotwax.alc.TenantServices.get#TenantUserGroupIds').call().get('tenantGroupId')]"/>
+        <filters entityFilterId="ALI_FILTER" entityName="co.hotwax.alc.ArtifactLogIndex"
+             filterMap="[tenantGroupId:ec.service.sync().name('co.hotwax.alc.TenantServices.get#TenantUserGroupIds').call().get('tenantGroupId')]"/>
+    </moqui.security.EntityFilterSet>
+
     <artifactGroups artifactGroupId="ALC_APP" description="Artifact Life Cycle app">
         <artifacts artifactName="component://artifactLifeCycle/screen/ArtifactLifeCycleApp.xml" artifactTypeEnumId="AT_XML_SCREEN" inheritAuthz="Y"/>
         <artifacts artifactName="/artifact-life-cycle" artifactTypeEnumId="AT_REST_PATH" inheritAuthz="Y"/>
         <!-- Full permissions for the ADMIN user group -->
         <authz artifactAuthzId="ALC_APP_ADMIN" userGroupId="ADMIN" authzTypeEnumId="AUTHZT_ALWAYS" authzActionEnumId="AUTHZA_ALL"/>
+        <authz artifactAuthzId="ALC_ALL_USER_AUTH" userGroupId="AllTenantAuth" authzTypeEnumId="AUTHZT_ALWAYS" authzActionEnumId="AUTHZA_ALL"/>
     </artifactGroups>
-</entity-facade-xml>
 
+    <moqui.security.ArtifactAuthz
+        artifactAuthzId="ALC_ALL_USER_AUTH" userGroupId="AllTenantAuth" artifactGroupId="ALC_APP"
+        authzTypeEnumId="AUTHZT_ALWAYS" authzActionEnumId="AUTHZA_VIEW"
+    >
+        <filters entityFilterSetId="ALC_ENTITY_FS"/>
+    </moqui.security.ArtifactAuthz>
+</entity-facade-xml>
