@@ -62,6 +62,7 @@ under the License.
         <field name="artifactLogTypeId" type="id"/>
         <field name="artifactLogIdTypeId" type="id"/>
         <field name="artifactLogIdSystem" type="id"/>
+        <field name="statusId" type="id" default="'Open'" enable-audit-log="true"/>
         <field name="tenantGroupId" type="id"/>
         <field name="fromSystem" type="id"/>
         <field name="toSystem" type="id"/>
@@ -69,7 +70,6 @@ under the License.
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-medium"/>
         <field name="content" type="object"/>
-        <field name="statusId" type="id" default="'Open'" enable-audit-log="true"/>
 
         <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
         <relationship type="one" related="moqui.security.UserGroup">
