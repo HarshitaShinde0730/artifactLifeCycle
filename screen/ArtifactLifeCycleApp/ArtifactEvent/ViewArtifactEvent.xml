@@ -57,7 +57,7 @@ along with this software (see the LICENSE.md file). If not, see
                     <box-header title="Artifact Event ${artifactLogIndex.artifactEventId} Details"/>
                     <box-body>
                         <form-single name="ViewArtifactEvent" map="artifactLogIndex" background-submit="true" transition="updateStatus">
-                            <auto-fields-entity entity-name="co.hotwax.alc.ArtifactLogIndex" field-type="display"><exclude field-name="statusId"/></auto-fields-entity>
+                            <auto-fields-entity entity-name="co.hotwax.alc.ArtifactLogIndex" field-type="display"/>
                             <field name="content"><default-field><text-area rows="10" read-only="true"/></default-field></field>
                             <field name="statusId"><default-field>
                                 <drop-down submit-on-select="true" no-current-selected-key="${artifactStatus.statusId}" current-description="${artifactStatus.description} [${artifactStatus.statusId}]">
