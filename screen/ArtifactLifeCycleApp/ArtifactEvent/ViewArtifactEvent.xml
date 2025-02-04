@@ -23,11 +23,7 @@ along with this software (see the LICENSE.md file). If not, see
     </transition>
 
     <transition name="updateStatus">
-        <actions>
-            <entity-find-one entity-name="co.hotwax.alc.ArtifactLogIndex" value-field="updateLogIndex" for-update="true"/>
-            <set field="updateLogIndex.statusId" from="statusId"/>
-            <entity-update value-field="updateLogIndex"/>
-        </actions>
+        <service-call name="co.hotwax.alc.ArtifactLifeCycleServices.update#ArtifactLogIndex" in-map="context" multi="parameter"/>
         <default-response type="none"/>
     </transition>
 
@@ -84,16 +80,17 @@ along with this software (see the LICENSE.md file). If not, see
                 <container-box>
                     <box-header title="Related Artifact Events"/>
                     <box-body>
-                        <form-list name="ArtifactLogIndexList" list="documentList" show-page-size="true" transition="updateStatus">
+                        <form-list name="ArtifactLogIndexList" list="documentList" show-page-size="true" transition="updateStatus" multi="true">
                             <row-actions>
                                 <filter-map-list list="artifactStatusList" to-list="currentRowStatus">
                                     <field-map field-name="statusId" from="statusId"/>
                                 </filter-map-list>
                                 <set field="status" from="currentRowStatus[0]"/>
                             </row-actions>
-                            <field name="artifactEventId">
+                            <field name="artifactEventId"><default-field><hidden/></default-field></field>
+                            <field name="artifactEventLink">
                                 <header-field show-order-by="true"/>
-                                <default-field><link url="viewArtifactEvent" text="${artifactEventId}"/></default-field>
+                                <default-field title="ID"><link url="viewArtifactEvent" text="${artifactEventId}"/></default-field>
                             </field>
                             <field name="artifactLogId">
                                 <header-field show-order-by="true"/>
@@ -104,7 +101,7 @@ along with this software (see the LICENSE.md file). If not, see
                                 <default-field><display/></default-field></field>
                             <field name="statusId">
                                 <header-field show-order-by="true"/>
-                                <default-field><drop-down submit-on-select="true" no-current-selected-key="${status.statusId}" current-description="${status.description} [${status.statusId}]">
+                                <default-field><drop-down no-current-selected-key="${status.statusId}" current-description="${status.description} [${status.statusId}]">
                                     <entity-options key="${toStatusId}" text="${toDescription} [${toStatusId}]">
                                         <!-- TODO: Fetch the complete list of ArtifactStatusAndFlowTransition at once instead of for each row -->
                                         <entity-find entity-name="co.hotwax.alc.ArtifactStatusAndFlowTransition" cache="true">
@@ -126,6 +123,7 @@ along with this software (see the LICENSE.md file). If not, see
                                     </container-dialog>
                                 </default-field>
                             </field>
+                            <field name="submitButton"><default-field title="Update"><submit/></default-field></field>
                         </form-list>
                     </box-body>
                 </container-box>
