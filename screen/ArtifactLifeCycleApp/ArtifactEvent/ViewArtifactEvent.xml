@@ -44,6 +44,22 @@ along with this software (see the LICENSE.md file). If not, see
 
         <set field="artifactLogId" from="artifactLogIndex.artifactLogId"/>
         <service-call name="co.hotwax.alc.SearchServices.search#ArtifactLogIndexes" out-map="context" in-map="context + [queryString:artifactLogId]"/>
+
+        <!-- Finding the largest status among all the related Artifact events to maintain the valid status change -->
+        <entity-find entity-name="moqui.basic.StatusItem" list="statusList" cache="true">
+            <econdition field-name="statusTypeId" value="ArtifactEvent"/>
+            <select-field field-name="statusId,sequenceNum"/>
+        </entity-find>
+        <script>statusList = statusList.collectEntries { [it.statusId, it.sequenceNum] }</script>
+        <set field="largestStatusSequence" type="Integer" from="-1"/>
+        <set field="largestStatus" value="Open"/>
+        <iterate list="documentList" entry="doc">
+            <set field="seqNum" type="Integer" from="statusList[doc.statusId]"/>
+            <if condition="seqNum > largestStatusSequence"><then>
+                <set field="largestStatusSequence" type="Integer" from="seqNum"/>
+                <set field="largestStatus" from="doc.statusId"/>
+            </then></if>
+        </iterate>
     </actions>
     <widgets>
         <label text="View Artifact Event Details" type="h3"/>
@@ -52,7 +68,7 @@ along with this software (see the LICENSE.md file). If not, see
                 <container-box>
                     <box-header title="Artifact Event ${artifactLogIndex.artifactEventId} Details"/>
                     <box-body>
-                        <form-single name="ViewArtifactEvent" map="artifactLogIndex" background-submit="true" transition="updateStatus">
+                        <form-single name="ViewArtifactEvent" map="artifactLogIndex" transition="updateStatus">
                             <auto-fields-entity entity-name="co.hotwax.alc.ArtifactLogIndex" field-type="display"/>
                             <field name="content"><default-field><text-area rows="10" read-only="true"/></default-field></field>
                             <field name="statusId"><default-field>
@@ -87,6 +103,23 @@ along with this software (see the LICENSE.md file). If not, see
                                 </filter-map-list>
                                 <set field="status" from="currentRowStatus[0]"/>
                             </row-actions>
+                            <row-selection id-field="artifactEventId">
+                                <action>
+                                    <form-single name="Update" transition="updateStatus">
+                                        <field name="statusId">
+                                            <default-field><drop-down>
+                                                <entity-options key="${toStatusId}" text="${toDescription} [${toStatusId}]">
+                                                    <entity-find entity-name="co.hotwax.alc.ArtifactStatusAndFlowTransition" cache="true">
+                                                        <econdition field-name="fromStatusId" from="largestStatus"/>
+                                                        <select-field field-name="toStatusId,toDescription"/>
+                                                    </entity-find>
+                                                </entity-options>
+                                            </drop-down></default-field>
+                                        </field>
+                                        <field name="submitButton"><default-field title="Update Status"><submit/></default-field></field>
+                                    </form-single>
+                                </action>
+                            </row-selection>
                             <field name="artifactEventId"><default-field><hidden/></default-field></field>
                             <field name="artifactEventLink">
                                 <header-field show-order-by="true"/>
