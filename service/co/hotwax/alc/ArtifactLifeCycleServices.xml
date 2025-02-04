@@ -165,4 +165,11 @@
             <return message="Artifact Log with artifactEventId: ${result.artifactEventId} has been created."/>
         </actions>
     </service>
+
+    <service verb="update" noun="ArtifactLogIndex" type="entity-auto">
+        <in-parameters>
+            <parameter name="artifactEventId" required="true"/>
+            <parameter name="statusId"/>
+        </in-parameters>
+    </service>
 </services>
