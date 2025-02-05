@@ -76,8 +76,11 @@ along with this software (see the LICENSE.md file). If not, see
             <row-col sm="12">
                 <section name="RelatedArtifactEvents">
                     <actions>
+                        <set field="defaultStatusId" value="Open,InProgress"/>
+                        <script>Map additionalQueryMap = [fields: [statusId:filterStatusId?:defaultStatusId], operators: [statusId_op:statusId_op?:'in']]</script>
                         <set field="artifactLogId" from="artifactLogIndex.artifactLogId"/>
-                        <service-call name="co.hotwax.alc.SearchServices.search#ArtifactLogIndexes" out-map="context" in-map="context + [queryString:artifactLogId]"/>
+
+                        <service-call name="co.hotwax.alc.SearchServices.search#ArtifactLogIndexes" out-map="context" in-map="context + [queryString:artifactLogId, additionalQueryMap:additionalQueryMap]"/>
 
                         <!-- Finding the largest status among all the related Artifact events to maintain the valid status change -->
                         <script>statusSeqMap = artifactStatusList.collectEntries { [it.statusId, it.sequenceNum] }</script>
@@ -94,6 +97,24 @@ along with this software (see the LICENSE.md file). If not, see
                     <widgets><container-box>
                         <box-header title="Related Artifact Events"/>
                         <box-body>
+                            <form-single name="FindArtifactLogIndex" background-submit="true" transition=".">
+                                <field name="artifactEventId"><default-field><hidden/></default-field></field>
+                                <field name="filterStatusId"><default-field title="Artifact Status">
+                                    <drop-down allow-multiple="true" no-current-selected-key="${filterStatusId?:defaultStatusId}">
+                                        <entity-options>
+                                            <entity-find entity-name="moqui.basic.StatusItem" cache="true">
+                                                <econdition field-name="statusTypeId" value="ArtifactEvent"/>
+                                                <select-field field-name="statusId,"/>
+                                            </entity-find>
+                                        </entity-options>
+                                    </drop-down>
+                                </default-field></field>
+                                <field name="submitButton"><default-field title="Search"><submit/></default-field></field>
+                                <field-layout><field-row-big>
+                                    <field-ref name="filterStatusId"/>
+                                    <field-ref name="submitButton"/>
+                                </field-row-big></field-layout>
+                            </form-single>
                             <form-list name="ArtifactLogIndexList" list="documentList" show-page-size="true" transition="updateStatus" multi="true">
                                 <row-actions>
                                     <filter-map-list list="artifactStatusList" to-list="currentRowStatus">
