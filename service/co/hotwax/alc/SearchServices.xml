@@ -50,6 +50,10 @@ along with this software (see the LICENSE.md file). If not, see
             <set field="fromOffset" from="pageNoLimit ? 0 : pageIndex * pageSize"/>
             <!-- TODO FUTURE: for this type of search ES limits size to 10k (default for index.max_result_window, can be changed per index), must use a scroll search to do more -->
             <set field="sizeLimit" from="pageNoLimit ? 10000 : pageSize"/>
+
+            <set field="searchFields" from="additionalQueryMap?.fields"/>
+            <set field="searchFieldsOp" from="additionalQueryMap?.operators"/>
+
             <script><![CDATA[
                 ed = ec.entity.getEntityDefinition("co.hotwax.alc.ArtifactLogIndex")
                 edf = ed.entityInfo.datasourceFactory
@@ -83,8 +87,17 @@ along with this software (see the LICENSE.md file). If not, see
                     searchMap.query.bool.must_not = [[term: [artifactEventId: artifactEventId]]]
                 }
 
-                if (additionalQueryMap) {
-                    List mustList = additionalQueryMap.findAll { it.value != null }.collect { key, value -> [term: [(key): value]] }
+                if (searchFields) {
+                    List mustList = []
+                    searchFields.each { field, value ->
+                        if(!value) return // skip if no value
+                        def operator = searchFieldsOp?.("${field}_op")
+                        if (operator == 'in') {
+                            mustList.add([terms: [(field): value]])
+                        } else if (!operator) {
+                            mustList.add([term: [(field): value]])
+                        }
+                    }
                     if (!mustList.isEmpty()) searchMap.query.bool.put("must", mustList)
                 }
 
