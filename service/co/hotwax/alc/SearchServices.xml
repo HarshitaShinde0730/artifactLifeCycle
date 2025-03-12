@@ -45,7 +45,6 @@ along with this software (see the LICENSE.md file). If not, see
             <set field="queryString" from="queryString ? elasticQueryAutoWildcard(queryString, true) : '*'"/>
             <if condition="queryString"><set field="queryString" from="'(' + queryString + ')'"/></if>
 
-
             <set field="artifactEventId" from="ec.web.parameters.get('artifactEventId')"/>
 
             <set field="fromOffset" from="pageNoLimit ? 0 : pageIndex * pageSize"/>
@@ -138,7 +137,6 @@ along with this software (see the LICENSE.md file). If not, see
     <service verb="search" noun="RecentArtifactLogs">
         <implements service="co.hotwax.alc.SearchServices.search#ArtifactLogDocuments"/>
         <actions>
-
             <set field="queryString" from="queryString ? elasticQueryAutoWildcard(queryString, true) : '*'"/>
             <if condition="queryString"><set field="queryString" from="'(' + queryString + ')'"/></if>
 
@@ -207,15 +205,13 @@ along with this software (see the LICENSE.md file). If not, see
                 List<Map> bucketsList = (List) resultMap.aggregations.(distinctAggName).buckets
                 documentList = []
 
-
                 for (Map bucket in bucketsList) {
                     Map recentHit = (Map) bucket.(recentAggName).hits.hits[0]
                     Map document = (Map) recentHit._source
-                    document._id = recent1Hit._id
+                    document._id = recentHit._id
                     documentList.add(document)
                 }
-
-               ]]></script>
+                ]]></script>
         </actions>
     </service>
 </services>

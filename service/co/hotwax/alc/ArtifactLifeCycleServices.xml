@@ -148,7 +148,9 @@
                 <return message=".${fileFormat} file format is not supported. Please upload a CSV or JSON file."/>
             </if>
 
-            <set field="errorDate" from="errorDate ?: ec.user.nowTimestamp"/>
+            <if condition="errorDate == null">
+                <set field="errorDate" from="ec.user.nowTimestamp"/>
+            </if>
 
             <set field="logFilePath" type="String" value="runtime://ArtifactLogs/${fileName}_${dateTime}.${fileFormat}"/>
             <set field="fileReference" from="ec.resource.getLocationReference(logFilePath)"/>
