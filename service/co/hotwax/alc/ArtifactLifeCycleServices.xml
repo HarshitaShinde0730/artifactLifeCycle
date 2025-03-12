@@ -141,6 +141,10 @@
                 <return message="No file extension found. Please upload a file with an extension, Supported extensions are: .csv, .json"/>
             </if>
 
+            <if condition="errorDate == null">
+                <set field="errorDate" from="ec.user.nowTimestamp"/>
+            </if>
+
             <set field="fileFormat" from="fileName.substring(extIndex + 1)"/>
             <set field="fileName" from="fileName.substring(0, extIndex)"/>
 
