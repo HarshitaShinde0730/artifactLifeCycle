@@ -38,6 +38,7 @@ under the License.
         <field name="logOriginPath" type="text-medium"/>
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-long"/>
+        <field name="errorDate" type="date-time"/>
         <field name="statusId" type="id" default="'Open'" enable-audit-log="true"/>
 
         <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
@@ -69,6 +70,7 @@ under the License.
         <field name="logOriginPath" type="text-medium"/>
         <field name="logFilePath" type="text-medium"/>
         <field name="eventMessage" type="text-long"/>
+        <field name="errorDate" type="date-time"/>
         <field name="content" type="object"/>
 
         <relationship type="one" title="ArtifactEvent" related="moqui.basic.StatusItem" short-alias="status" />
