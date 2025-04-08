@@ -43,6 +43,7 @@ along with this software (see the LICENSE.md file). If not, see
             <return message="Artifact Log ${artifactEventId} is not found." type="danger" error="true" public="true"/>
         </if>
         <set field="artifactLogIndex" from="artifactLogIndexList.get(0)"/>
+
         <entity-find entity-name="moqui.basic.StatusItem" list="artifactStatusList" cache="true">
             <econdition field-name="statusTypeId" value="ArtifactEvent"/>
             <select-field field-name="statusId,sequenceNum,description"/>
