@@ -35,6 +35,21 @@ along with this software (see the LICENSE.md file). If not, see
             }
         </script>
         <service-call name="co.hotwax.alc.SearchServices.search#RecentArtifactLogs" in-map="[queryString:queryString, additionalQueryMap:additionalQueryMap, pageNoLimit:!anyField]" out-map="context"/>
+        <script>
+            def sortingList = documentList ?: []
+            if (orderByField) {
+            def isdesc = orderByField.startsWith('-')
+            def fieldName = isdesc ? orderByField.substring(1) : orderByField
+            def sortedList = sortingList.sort { it[fieldName] }
+            if (isdesc) {
+            sortedList = sortedList.reverse()
+            }
+            context.put('documentList',sortedList)
+            }
+            else {
+            context.put('documentList',sortingList)
+            }
+        </script>
     </actions>
     <widgets>
         <label text="Find Artifact Event Page" type="h3"/>
@@ -78,7 +93,7 @@ along with this software (see the LICENSE.md file). If not, see
             <field name="fromSystem"><default-field><display/></default-field></field>
             <field name="toSystem"><default-field><display/></default-field></field>
             <field name="eventMessage"><default-field><display/></default-field></field>
-            <field name="errorDate"><default-field><display/></default-field></field>
+            <field name="errorDate"><header-field show-order-by="true"/><default-field><display text="${errorDate ? ec.l10n.format(new Timestamp(context.get('errorDate')), 'yyyy-MM-dd HH:mm:ss') : errorDate}"/></default-field></field>
             <field name="content">
                 <default-field>
                     <container-dialog id="contentDialog" button-text="Content">
